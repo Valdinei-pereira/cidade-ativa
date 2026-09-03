@@ -610,20 +610,19 @@
 
 .admin-alterar-status select {
   min-width: 210px;
-
   height: 42px;
-
   border: 1px solid #cbd5e1;
-
   border-radius: 9px;
-
   padding: 0 10px;
-
   background: white;
-
+  color: #1f2937;
   outline: none;
-
   cursor: pointer;
+}
+
+.admin-alterar-status select option {
+  color: #1f2937;
+  background: white;
 }
 
 /* DETALHES */
