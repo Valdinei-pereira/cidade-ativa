@@ -8,6 +8,7 @@ interface AdminLoginProps {
 function AdminLogin({ onLogin }: AdminLoginProps) {
   const [usuario, setUsuario] = useState("");
   const [senha, setSenha] = useState("");
+  const [mostrarSenha, setMostrarSenha] = useState(false);
   const [erro, setErro] = useState("");
   const [carregando, setCarregando] = useState(false);
 
@@ -25,7 +26,7 @@ function AdminLogin({ onLogin }: AdminLoginProps) {
       setCarregando(true);
 
       const response = await fetch(
-        "http://localhost:3001/api/admin/login",
+        "https://cidade-ativa.onrender.com/api/admin/login",
         {
           method: "POST",
           headers: {
@@ -66,6 +67,7 @@ function AdminLogin({ onLogin }: AdminLoginProps) {
   return (
     <div className="login-container">
       <div className="login-card">
+
         <div className="login-icon">🏛️</div>
 
         <h1>Administração</h1>
@@ -75,6 +77,7 @@ function AdminLogin({ onLogin }: AdminLoginProps) {
         </p>
 
         <form onSubmit={entrar}>
+
           <div className="login-campo">
             <label>Usuário</label>
 
@@ -92,15 +95,36 @@ function AdminLogin({ onLogin }: AdminLoginProps) {
           <div className="login-campo">
             <label>Senha</label>
 
-            <input
-              type="password"
-              placeholder="Digite sua senha"
-              value={senha}
-              onChange={(e) =>
-                setSenha(e.target.value)
-              }
-              autoComplete="current-password"
-            />
+            <div className="senha-container">
+              <input
+                type={
+                  mostrarSenha
+                    ? "text"
+                    : "password"
+                }
+                placeholder="Digite sua senha"
+                value={senha}
+                onChange={(e) =>
+                  setSenha(e.target.value)
+                }
+                autoComplete="current-password"
+              />
+
+              <button
+                type="button"
+                className="btn-mostrar-senha"
+                onClick={() =>
+                  setMostrarSenha(!mostrarSenha)
+                }
+                aria-label={
+                  mostrarSenha
+                    ? "Ocultar senha"
+                    : "Mostrar senha"
+                }
+              >
+                {mostrarSenha ? "🙈" : "👁️"}
+              </button>
+            </div>
           </div>
 
           {erro && (
@@ -118,6 +142,7 @@ function AdminLogin({ onLogin }: AdminLoginProps) {
               ? "Entrando..."
               : "Entrar"}
           </button>
+
         </form>
       </div>
     </div>
