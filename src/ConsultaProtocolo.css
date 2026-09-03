@@ -1,0 +1,513 @@
+.consulta-pagina {
+  min-height: 100vh;
+  background: #f5f7fb;
+  color: #172033;
+}
+
+.consulta-container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 45px 20px 60px;
+  box-sizing: border-box;
+}
+
+.consulta-topo {
+  height: 54px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 24px;
+  box-sizing: border-box;
+}
+
+.consulta-voltar {
+  border: none;
+  background: #2563eb;
+  color: #ffffff;
+  padding: 11px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.consulta-voltar:hover {
+  background: #1d4ed8;
+}
+
+.consulta-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 30px;
+  text-align: left;
+}
+
+.consulta-icone {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  background: #eef4ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.consulta-header h1 {
+  margin: 0 0 5px;
+  font-size: 30px;
+  line-height: 1.2;
+  color: #111827;
+}
+
+.consulta-header p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 15px;
+}
+
+.consulta-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+  box-sizing: border-box;
+}
+
+.consulta-card h2 {
+  margin: 0 0 22px;
+  font-size: 19px;
+  color: #172033;
+  text-align: center;
+}
+
+.busca-card {
+  max-width: 100%;
+}
+
+.busca-card label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #374151;
+}
+
+.consulta-busca {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 12px;
+  width: 100%;
+}
+
+.consulta-busca input {
+  flex: 1;
+  min-width: 0;
+  height: 52px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 0 16px;
+  font-size: 16px;
+  outline: none;
+  box-sizing: border-box;
+  color: #111827;
+  background: #ffffff;
+}
+
+.consulta-busca input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.consulta-busca input::placeholder {
+  color: #9ca3af;
+}
+
+.consulta-busca button {
+  border: none;
+  border-radius: 10px;
+  padding: 0 28px;
+  height: 52px;
+  min-width: 120px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.consulta-busca button:hover {
+  background: #1d4ed8;
+}
+
+.consulta-busca button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.consulta-erro {
+  margin-top: 15px;
+  padding: 13px 15px;
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  color: #be123c;
+  border-radius: 10px;
+}
+
+.protocolo-destaque {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 22px 24px;
+  margin-bottom: 20px;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+}
+
+.protocolo-destaque > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.protocolo-destaque span {
+  display: block !important;
+  color: #6b7280 !important;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.protocolo-destaque strong {
+  display: block;
+  font-size: 25px;
+  letter-spacing: 0.5px;
+  color: #111827;
+}
+
+.status-badge {
+  padding: 9px 16px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.status-recebido {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.status-analise,
+.status-em-analise {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-atendimento,
+.status-em-atendimento {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+.status-resolvido {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-recusado {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* =========================================
+   TIMELINE
+   ========================================= */
+
+.consulta-pagina .linha-status {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: flex-start !important;
+  justify-content: stretch !important;
+  width: 100% !important;
+  padding: 10px 5px 5px;
+  box-sizing: border-box;
+  overflow: visible !important;
+}
+
+.consulta-pagina .status-etapa {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+}
+
+.consulta-pagina .status-etapa-wrapper {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  flex: 0 0 auto !important;
+  min-width: 105px !important;
+}
+
+.consulta-pagina .etapa-status {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  min-width: 105px !important;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 13px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.consulta-pagina .etapa-status.ativa {
+  color: #2563eb !important;
+  font-weight: 600;
+}
+
+.consulta-pagina .bolinha {
+  width: 38px !important;
+  height: 38px !important;
+  margin: 0 auto 9px !important;
+  border-radius: 50%;
+  background: #e5e7eb !important;
+  color: #6b7280 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 700;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.consulta-pagina .etapa-status.ativa .bolinha {
+  background: #2563eb !important;
+  color: #ffffff !important;
+}
+
+.consulta-pagina .linha {
+  display: block !important;
+  flex: 1 1 auto !important;
+  width: auto !important;
+  min-width: 30px !important;
+  height: 3px !important;
+  background: #e5e7eb !important;
+  margin-top: 18px !important;
+}
+
+.consulta-pagina .linha-ativa {
+  background: #2563eb !important;
+}
+
+/* =========================================
+   INFORMAÇÕES
+   ========================================= */
+
+.consulta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.info-item {
+  padding: 14px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-item span {
+  display: block !important;
+  color: #6b7280 !important;
+  font-size: 13px;
+  margin-bottom: 7px;
+}
+
+.info-item strong {
+  display: block;
+  color: #222222;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.descricao-item p {
+  margin: 0;
+  line-height: 1.6;
+  color: #333333;
+  word-break: break-word;
+}
+
+/* =========================================
+   FOTOS
+   ========================================= */
+
+.fotos-consulta {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+.fotos-consulta a {
+  display: block;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.fotos-consulta img {
+  display: block;
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  transition: transform 0.2s;
+}
+
+.fotos-consulta img:hover {
+  transform: scale(1.03);
+}
+
+/* =========================================
+   COORDENADAS
+   ========================================= */
+
+.consulta-coordenadas {
+  background: #eef4ff;
+  border: 1px solid #dbeafe;
+  color: #1e40af;
+  padding: 14px 18px;
+  border-radius: 10px;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+/* =========================================
+   RODAPÉ
+   ========================================= */
+
+.consulta-footer {
+  text-align: center;
+  padding: 25px 20px;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 700px) {
+  .consulta-container {
+    padding: 30px 15px 40px;
+  }
+
+  .consulta-topo {
+    padding: 0 15px;
+  }
+
+  .consulta-header {
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 12px;
+  }
+
+  .consulta-icone {
+    width: 48px;
+    height: 48px;
+    font-size: 23px;
+    border-radius: 12px;
+  }
+
+  .consulta-header h1 {
+    font-size: 23px;
+  }
+
+  .consulta-header p {
+    font-size: 14px;
+  }
+
+  .consulta-card {
+    padding: 20px;
+  }
+
+  .consulta-busca {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .consulta-busca input {
+    width: 100%;
+  }
+
+  .consulta-busca button {
+    height: 50px;
+    width: 100%;
+  }
+
+  .protocolo-destaque {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  .status-badge {
+    align-self: flex-start;
+  }
+
+  .consulta-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .consulta-pagina .linha-status {
+    overflow-x: auto !important;
+    justify-content: flex-start !important;
+    padding-bottom: 10px;
+  }
+
+  .consulta-pagina .status-etapa {
+    flex: 0 0 auto !important;
+  }
+
+  .consulta-pagina .status-etapa-wrapper {
+    min-width: 120px !important;
+  }
+
+  .consulta-pagina .etapa-status {
+    min-width: 85px !important;
+  }
+
+  .consulta-pagina .etapa-status span {
+    font-size: 11px;
+  }
+
+  .consulta-pagina .linha {
+    min-width: 30px !important;
+  }
+
+  .fotos-consulta {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .fotos-consulta img {
+    height: 130px;
+  }
+}
