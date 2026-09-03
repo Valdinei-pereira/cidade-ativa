@@ -1185,9 +1185,8 @@ const enviarSolicitacao = async () => {
 
     });
 
-    const response = await fetch(
-
-      "http://localhost:3001/api/solicitacoes",
+const response = await fetch(
+  "https://cidade-ativa.onrender.com/api/solicitacoes",
 
       {
 
@@ -1397,17 +1396,12 @@ const enviarSolicitacao = async () => {
 
         setConsulta(null);
 
-        const response =
-
-          await fetch(
-
-            `http://localhost:3001/api/solicitacoes/${encodeURIComponent(
-
-              protocoloLimpo
-
-            )}`
-
-          );
+const response =
+  await fetch(
+    `https://cidade-ativa.onrender.com/api/solicitacoes/${encodeURIComponent(
+      protocoloLimpo
+    )}`
+  );
 
         const data =
 
@@ -2399,7 +2393,7 @@ if (pagina === "admin") {
 
                               ? foto
 
-                              : `http://localhost:3001${foto}`;
+                             : `https://cidade-ativa.onrender.com${foto}`; 
 
                           return (
 
