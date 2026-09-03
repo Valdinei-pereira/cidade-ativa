@@ -4,7 +4,7 @@ const path = require("path");
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
-
+const fs = require("fs");
 const db = require("./database");
 
 dotenv.config();
@@ -22,12 +22,21 @@ const JWT_SECRET =
 // =====================================================
 
 app.use(cors());
-
 app.use(express.json());
+
+// =====================================================
+// PASTA DE UPLOADS
+// =====================================================
+
+const uploadsDir = path.join(__dirname, "uploads");
+
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
 app.use(
   "/uploads",
-  express.static(path.join(__dirname, "uploads"))
+  express.static(uploadsDir)
 );
 
 // =====================================================
@@ -36,7 +45,7 @@ app.use(
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "uploads"));
+    cb(null, uploadsDir);
   },
 
   filename: function (req, file, cb) {
