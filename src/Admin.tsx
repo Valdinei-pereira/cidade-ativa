@@ -142,7 +142,7 @@ export default function Admin() {
       }
 
       const response = await fetch(
-        "http://localhost:3001/api/admin/solicitacoes",
+        "https://cidade-ativa.onrender.com/api/admin/solicitacoes",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -297,9 +297,9 @@ export default function Admin() {
       }
 
       const response = await fetch(
-        `http://localhost:3001/api/admin/solicitacoes/${encodeURIComponent(
-          protocolo
-        )}/status`,
+      `https://cidade-ativa.onrender.com/api/admin/solicitacoes/${encodeURIComponent(
+        protocolo
+      )}/status`,
         {
           method: "PUT",
 
@@ -1102,7 +1102,7 @@ export default function Admin() {
                             "http"
                           )
                             ? foto
-                            : `http://localhost:3001${foto}`;
+                            : `https://cidade-ativa.onrender.com${foto}`;
 
                         return (
 
