@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const fs = require("fs");
 const db = require("./database");
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
 
 dotenv.config();
 
@@ -19,21 +19,10 @@ const JWT_SECRET =
   "sistema-problemas-chave-super-secreta";
 
 // =====================================================
-// CONFIGURAÇÃO DE E-MAIL
+// CONFIGURAÇÃO DE E-MAIL - RESEND
 // =====================================================
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.EMAIL_USUARIO,
-    pass: process.env.EMAIL_SENHA,
-  },
-  connectionTimeout: 30000,
-  greetingTimeout: 30000,
-  socketTimeout: 30000,
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // =====================================================
 // CONFIGURAÇÕES
@@ -400,99 +389,111 @@ app.post(
       // =====================================================
 
       try {
-        await transporter.sendMail({
-          from: `"Cidade Ativa" <${process.env.EMAIL_USUARIO}>`,
-          to: process.env.EMAIL_DESTINO,
+        const resultadoEmail =
+          await resend.emails.send({
+            from:
+              "Cidade Ativa <onboarding@resend.dev>",
 
-          subject: `Nova solicitação - ${protocolo}`,
+            to: [
+              process.env.EMAIL_DESTINO,
+            ],
 
-          html: `
-            <div style="
-              font-family: Arial, sans-serif;
-              max-width: 700px;
-              margin: auto;
-            ">
+            subject:
+              `Nova solicitação - ${protocolo}`,
 
-              <h2 style="color: #008f6b;">
-                Nova solicitação recebida
-              </h2>
+            html: `
+              <div style="
+                font-family: Arial, sans-serif;
+                max-width: 700px;
+                margin: auto;
+                padding: 20px;
+              ">
 
-              <p>
-                Uma nova solicitação foi registrada
-                no sistema Cidade Ativa.
-              </p>
+                <h2 style="color: #008f6b;">
+                  Nova solicitação recebida
+                </h2>
 
-              <hr>
+                <p>
+                  Uma nova solicitação foi registrada
+                  no sistema Cidade Ativa.
+                </p>
 
-              <h3>📋 Solicitação</h3>
+                <hr>
 
-              <p>
-                <strong>Protocolo:</strong>
-                ${protocolo}
-              </p>
+                <h3>📋 Solicitação</h3>
 
-              <p>
-                <strong>Categoria:</strong>
-                ${categoria}
-              </p>
+                <p>
+                  <strong>Protocolo:</strong>
+                  ${protocolo}
+                </p>
 
-              <p>
-                <strong>Descrição:</strong><br>
-                ${descricao}
-              </p>
+                <p>
+                  <strong>Categoria:</strong>
+                  ${categoria}
+                </p>
 
-              <h3>📍 Localização</h3>
+                <p>
+                  <strong>Descrição:</strong><br>
+                  ${descricao}
+                </p>
 
-              <p>
-                <strong>Endereço:</strong>
-                ${rua}, ${numero || "S/N"}
-              </p>
+                <h3>📍 Localização</h3>
 
-              <p>
-                <strong>Bairro:</strong>
-                ${bairro}
-              </p>
+                <p>
+                  <strong>Endereço:</strong>
+                  ${rua}, ${numero || "S/N"}
+                </p>
 
-              <p>
-                <strong>Cidade:</strong>
-                ${cidade}
-              </p>
+                <p>
+                  <strong>Bairro:</strong>
+                  ${bairro}
+                </p>
 
-              <h3>👤 Dados do morador</h3>
+                <p>
+                  <strong>Cidade:</strong>
+                  ${cidade}
+                </p>
 
-              <p>
-                <strong>Nome:</strong>
-                ${nome}
-              </p>
+                <h3>👤 Dados do morador</h3>
 
-              <p>
-                <strong>Telefone:</strong>
-                ${telefone}
-              </p>
+                <p>
+                  <strong>Nome:</strong>
+                  ${nome}
+                </p>
 
-              <p>
-                <strong>E-mail:</strong>
-                ${email}
-              </p>
+                <p>
+                  <strong>Telefone:</strong>
+                  ${telefone}
+                </p>
 
-              <hr>
+                <p>
+                  <strong>E-mail:</strong>
+                  ${email}
+                </p>
 
-              <p>
-                <strong>Status:</strong>
-                Recebido
-              </p>
+                <hr>
 
-              <p style="color: #666;">
-                Este e-mail foi enviado automaticamente
-                pelo sistema Cidade Ativa.
-              </p>
+                <p>
+                  <strong>Status:</strong>
+                  Recebido
+                </p>
 
-            </div>
-          `,
-        });
+                <p style="color: #666;">
+                  Este e-mail foi enviado automaticamente
+                  pelo sistema Cidade Ativa.
+                </p>
+
+              </div>
+            `,
+          });
 
         console.log(
           `E-mail enviado para nova solicitação ${protocolo}`
+        );
+
+        console.log(
+          "Resposta do Resend:",
+          resultadoEmail
         );
 
       } catch (emailError) {
