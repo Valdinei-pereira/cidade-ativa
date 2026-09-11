@@ -1641,17 +1641,14 @@ const response =
 
         </main>
 
-        <footer className="footer">
-
-          <p>
-
-            Cidade Ativa • Participação
-
-            cidadã
-
-          </p>
-
-        </footer>
+      <footer className="footer">
+        <p>
+          Cidade Ativa • Participação cidadã
+        </p>
+        <small>
+          Desenvolvido por Bruna Villanova
+        </small>
+      </footer>
 
       </div>
 
@@ -2489,17 +2486,15 @@ if (pagina === "admin") {
 
         </main>
 
-        <footer className="footer">
+          <footer className="footer">
+            <p>
+              Cidade Ativa • Participação cidadã
+            </p>
 
-          <p>
-
-            Cidade Ativa • Participação
-
-            cidadã
-
-          </p>
-
-        </footer>
+            <small>
+              Desenvolvido por Bruna Villanova
+            </small>
+          </footer>
 
       </div>
 
@@ -2536,8 +2531,7 @@ if (pagina === "admin") {
           <div>
 
             <strong>
-
-               NEYghborhood ATIVA
+          Cidade Ativa
 
             </strong>
 
@@ -4176,18 +4170,14 @@ if (pagina === "admin") {
           FOOTER
 
       ================================================= */}
-
-      <footer className="footer">
-
-        <p>
-
-          Cidade Ativa • Participação
-
-          cidadã
-
-        </p>
-
-      </footer>
+    <footer className="footer">
+      <p>
+        Cidade Ativa • Participação cidadã
+      </p>
+      <small>
+        Desenvolvido por Bruna Villanova
+      </small>
+    </footer>
 
     </div>
 
