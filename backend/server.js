@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const fs = require("fs");
 const db = require("./database");
+const nodemailer = require("nodemailer");
 
 dotenv.config();
 
@@ -16,6 +17,18 @@ const PORT = process.env.PORT || 3001;
 const JWT_SECRET =
   process.env.JWT_SECRET ||
   "sistema-problemas-chave-super-secreta";
+
+// =====================================================
+// CONFIGURAÇÃO DE E-MAIL
+// =====================================================
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USUARIO,
+    pass: process.env.EMAIL_SENHA,
+  },
+});
 
 // =====================================================
 // CONFIGURAÇÕES
@@ -126,7 +139,7 @@ function gerarProtocolo() {
 // LOGIN ADMIN
 // =====================================================
 
-app.post("/api/admin/login", (req, res) => {
+app.post("/api/admin/login", async (req, res) => {
   try {
     const { usuario, senha } = req.body;
 
@@ -204,7 +217,8 @@ function autenticarAdmin(req, res, next) {
 
     if (usuario.tipo !== "admin") {
       return res.status(403).json({
-        mensagem: "Acesso permitido somente para administradores.",
+        mensagem:
+          "Acesso permitido somente para administradores.",
       });
     }
 
@@ -213,7 +227,8 @@ function autenticarAdmin(req, res, next) {
     next();
   } catch (error) {
     return res.status(401).json({
-      mensagem: "Sessão administrativa inválida ou expirada.",
+      mensagem:
+        "Sessão administrativa inválida ou expirada.",
     });
   }
 }
@@ -225,7 +240,7 @@ function autenticarAdmin(req, res, next) {
 app.post(
   "/api/solicitacoes",
   upload.array("fotos", 5),
-  (req, res) => {
+  async (req, res) => {
     try {
       const {
         categoria,
@@ -240,6 +255,10 @@ app.post(
         telefone,
         email,
       } = req.body;
+
+      // =====================================================
+      // VALIDAÇÕES
+      // =====================================================
 
       if (!categoria) {
         return res.status(400).json({
@@ -289,14 +308,25 @@ app.post(
         });
       }
 
+      // =====================================================
+      // GERAR PROTOCOLO
+      // =====================================================
+
       const protocolo = gerarProtocolo();
 
-      // URLs permanentes das fotos
+      // =====================================================
+      // FOTOS
+      // =====================================================
+
       const fotos =
         (req.files || []).map(
           (arquivo) =>
             `/uploads/${arquivo.filename}`
         );
+
+      // =====================================================
+      // INSERIR NO BANCO
+      // =====================================================
 
       const inserir = db.prepare(`
         INSERT INTO solicitacoes (
@@ -342,28 +372,146 @@ app.post(
         numero: numero || "",
         bairro,
         cidade,
+
         latitude:
           latitude !== undefined &&
           latitude !== ""
             ? Number(latitude)
             : null,
+
         longitude:
           longitude !== undefined &&
           longitude !== ""
             ? Number(longitude)
             : null,
+
         nome,
         telefone,
         email,
       });
 
+      // =====================================================
+      // ENVIAR E-MAIL PARA O ADMINISTRADOR
+      // =====================================================
+
+      try {
+        await transporter.sendMail({
+          from: `"Cidade Ativa" <${process.env.EMAIL_USUARIO}>`,
+          to: process.env.EMAIL_DESTINO,
+
+          subject: `Nova solicitação - ${protocolo}`,
+
+          html: `
+            <div style="
+              font-family: Arial, sans-serif;
+              max-width: 700px;
+              margin: auto;
+            ">
+
+              <h2 style="color: #008f6b;">
+                Nova solicitação recebida
+              </h2>
+
+              <p>
+                Uma nova solicitação foi registrada
+                no sistema Cidade Ativa.
+              </p>
+
+              <hr>
+
+              <h3>📋 Solicitação</h3>
+
+              <p>
+                <strong>Protocolo:</strong>
+                ${protocolo}
+              </p>
+
+              <p>
+                <strong>Categoria:</strong>
+                ${categoria}
+              </p>
+
+              <p>
+                <strong>Descrição:</strong><br>
+                ${descricao}
+              </p>
+
+              <h3>📍 Localização</h3>
+
+              <p>
+                <strong>Endereço:</strong>
+                ${rua}, ${numero || "S/N"}
+              </p>
+
+              <p>
+                <strong>Bairro:</strong>
+                ${bairro}
+              </p>
+
+              <p>
+                <strong>Cidade:</strong>
+                ${cidade}
+              </p>
+
+              <h3>👤 Dados do morador</h3>
+
+              <p>
+                <strong>Nome:</strong>
+                ${nome}
+              </p>
+
+              <p>
+                <strong>Telefone:</strong>
+                ${telefone}
+              </p>
+
+              <p>
+                <strong>E-mail:</strong>
+                ${email}
+              </p>
+
+              <hr>
+
+              <p>
+                <strong>Status:</strong>
+                Recebido
+              </p>
+
+              <p style="color: #666;">
+                Este e-mail foi enviado automaticamente
+                pelo sistema Cidade Ativa.
+              </p>
+
+            </div>
+          `,
+        });
+
+        console.log(
+          `E-mail enviado para nova solicitação ${protocolo}`
+        );
+
+      } catch (emailError) {
+        console.error(
+          "Erro ao enviar e-mail:",
+          emailError
+        );
+      }
+
+      // =====================================================
+      // RESPOSTA
+      // =====================================================
+
       return res.status(201).json({
         mensagem:
           "Solicitação registrada com sucesso.",
+
         protocolo,
+
         fotos,
+
         status: "RECEBIDO",
       });
+
     } catch (error) {
       console.error(
         "Erro ao registrar solicitação:",
@@ -421,10 +569,12 @@ app.get(
 
       return res.json({
         ...solicitacao,
+
         fotos: solicitacao.fotos
           ? JSON.parse(solicitacao.fotos)
           : [],
       });
+
     } catch (error) {
       console.error(error);
 
@@ -458,6 +608,7 @@ app.get(
       const resultado =
         solicitacoes.map((item) => ({
           ...item,
+
           fotos: item.fotos
             ? JSON.parse(item.fotos)
             : [],
@@ -466,6 +617,7 @@ app.get(
       return res.json({
         solicitacoes: resultado,
       });
+
     } catch (error) {
       console.error(error);
 
@@ -487,6 +639,7 @@ app.put(
   (req, res) => {
     try {
       const { protocolo } = req.params;
+
       const { status } = req.body;
 
       const statusPermitidos = [
@@ -499,8 +652,7 @@ app.put(
 
       if (!statusPermitidos.includes(status)) {
         return res.status(400).json({
-          mensagem:
-            "Status inválido.",
+          mensagem: "Status inválido.",
         });
       }
 
@@ -536,13 +688,16 @@ app.put(
       return res.json({
         mensagem:
           "Status atualizado com sucesso.",
+
         solicitacao: {
           ...solicitacao,
+
           fotos: solicitacao.fotos
             ? JSON.parse(solicitacao.fotos)
             : [],
         },
       });
+
     } catch (error) {
       console.error(error);
 
@@ -585,7 +740,9 @@ app.use(
 // =====================================================
 
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(
+    `Servidor rodando na porta ${PORT}`
+  );
 
   console.log(
     "Banco de dados conectado."

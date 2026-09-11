@@ -2537,7 +2537,7 @@ if (pagina === "admin") {
 
             <strong>
 
-              Cidade Ativa
+               NEYghborhood ATIVA
 
             </strong>
 
