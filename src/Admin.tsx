@@ -393,9 +393,9 @@ export default function Admin() {
           </div>
 
           <div>
-            <strong>
-              Cidade Ativa
-            </strong>
+          <strong>
+            NEYghborhood
+          </strong>
 
             <span>
               Painel administrativo

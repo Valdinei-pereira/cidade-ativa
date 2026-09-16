@@ -1501,11 +1501,9 @@ const response =
 
             <div>
 
-              <strong>
-
-                Cidade Ativa
-
-              </strong>
+            <strong>
+              NEYghborhood
+            </strong>
 
               <span>
 
@@ -1643,7 +1641,7 @@ const response =
 
       <footer className="footer">
         <p>
-          Cidade Ativa • Participação cidadã
+          NEYghborhood • Participação cidadã
         </p>
         <small>
           Desenvolvido por Bruna Villanova
@@ -1834,7 +1832,7 @@ if (pagina === "admin") {
 
               <strong>
 
-                Cidade Ativa
+               NEYghborhood
 
               </strong>
 
@@ -2488,7 +2486,7 @@ if (pagina === "admin") {
 
           <footer className="footer">
             <p>
-              Cidade Ativa • Participação cidadã
+             NEYghborhood • Participação cidadã
             </p>
 
             <small>
@@ -2531,7 +2529,7 @@ if (pagina === "admin") {
           <div>
 
             <strong>
-          Cidade Ativa
+              NEYghborhood
 
             </strong>
 
@@ -4172,7 +4170,7 @@ if (pagina === "admin") {
       ================================================= */}
     <footer className="footer">
       <p>
-        Cidade Ativa • Participação cidadã
+       NEYghborhood • Participação cidadã
       </p>
       <small>
         Desenvolvido por Bruna Villanova
