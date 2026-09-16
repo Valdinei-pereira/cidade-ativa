@@ -26,7 +26,7 @@ function AdminLogin({ onLogin }: AdminLoginProps) {
       setCarregando(true);
 
       const response = await fetch(
-        "https://cidade-ativa.onrender.com/api/admin/login",
+        "https://cidade-ativa-u2ef.onrender.com/api/admin/login",
         {
           method: "POST",
           headers: {

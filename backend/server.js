@@ -5,10 +5,11 @@ const multer = require("multer");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const fs = require("fs");
-const db = require("./database");
-const { Resend } = require("resend");
 
 dotenv.config();
+
+const supabase = require("./supabase");
+const { Resend } = require("resend");
 
 const app = express();
 
@@ -29,6 +30,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 // =====================================================
 
 app.use(cors());
+
 app.use(express.json());
 
 // =====================================================
@@ -41,10 +43,7 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-app.use(
-  "/uploads",
-  express.static(uploadsDir)
-);
+app.use("/uploads", express.static(uploadsDir));
 
 // =====================================================
 // MULTER - UPLOAD DE FOTOS
@@ -109,22 +108,29 @@ app.get("/api/teste", (req, res) => {
 // GERAR PROTOCOLO
 // =====================================================
 
-function gerarProtocolo() {
+async function gerarProtocolo() {
   let protocolo;
+  let existe = true;
 
-  do {
+  while (existe) {
     const numero = Math.floor(
       100000 + Math.random() * 900000
     );
 
     protocolo = `PB-${new Date().getFullYear()}-${numero}`;
-  } while (
-    db
-      .prepare(
-        "SELECT id FROM solicitacoes WHERE protocolo = ?"
-      )
-      .get(protocolo)
-  );
+
+    const { data, error } = await supabase
+      .from("solicitacoes")
+      .select("id")
+      .eq("protocolo", protocolo)
+      .maybeSingle();
+
+    if (error) {
+      throw error;
+    }
+
+    existe = !!data;
+  }
 
   return protocolo;
 }
@@ -182,8 +188,7 @@ app.post("/api/admin/login", async (req, res) => {
 
 function autenticarAdmin(req, res, next) {
   try {
-    const autorizacao =
-      req.headers.authorization;
+    const autorizacao = req.headers.authorization;
 
     if (!autorizacao) {
       return res.status(401).json({
@@ -306,83 +311,52 @@ app.post(
       // GERAR PROTOCOLO
       // =====================================================
 
-      const protocolo = gerarProtocolo();
+      const protocolo = await gerarProtocolo();
 
       // =====================================================
       // FOTOS
       // =====================================================
 
-      const fotos =
-        (req.files || []).map(
-          (arquivo) =>
-            `/uploads/${arquivo.filename}`
-        );
+      const fotos = (req.files || []).map(
+        (arquivo) =>
+          `/uploads/${arquivo.filename}`
+      );
 
       // =====================================================
-      // INSERIR NO BANCO
+      // INSERIR NO SUPABASE
       // =====================================================
 
-      const inserir = db.prepare(`
-        INSERT INTO solicitacoes (
-          protocolo,
-          categoria,
-          descricao,
-          fotos,
-          rua,
-          numero,
-          bairro,
-          cidade,
-          latitude,
-          longitude,
-          nome,
-          telefone,
-          email,
-          status
-        )
-        VALUES (
-          @protocolo,
-          @categoria,
-          @descricao,
-          @fotos,
-          @rua,
-          @numero,
-          @bairro,
-          @cidade,
-          @latitude,
-          @longitude,
-          @nome,
-          @telefone,
-          @email,
-          'RECEBIDO'
-        )
-      `);
+      const { error: erroInsercao } =
+        await supabase
+          .from("solicitacoes")
+          .insert({
+            protocolo,
+            categoria,
+            descricao,
+            fotos: JSON.stringify(fotos),
+            rua,
+            numero: numero || "",
+            bairro,
+            cidade,
+            latitude:
+              latitude !== undefined &&
+              latitude !== ""
+                ? Number(latitude)
+                : null,
+            longitude:
+              longitude !== undefined &&
+              longitude !== ""
+                ? Number(longitude)
+                : null,
+            nome,
+            telefone,
+            email,
+            status: "RECEBIDO",
+          });
 
-      inserir.run({
-        protocolo,
-        categoria,
-        descricao,
-        fotos: JSON.stringify(fotos),
-        rua,
-        numero: numero || "",
-        bairro,
-        cidade,
-
-        latitude:
-          latitude !== undefined &&
-          latitude !== ""
-            ? Number(latitude)
-            : null,
-
-        longitude:
-          longitude !== undefined &&
-          longitude !== ""
-            ? Number(longitude)
-            : null,
-
-        nome,
-        telefone,
-        email,
-      });
+      if (erroInsercao) {
+        throw erroInsercao;
+      }
 
       // =====================================================
       // ENVIAR E-MAIL PARA O ADMINISTRADOR
@@ -487,15 +461,21 @@ app.post(
             `,
           });
 
-        console.log(
-          `E-mail enviado para nova solicitação ${protocolo}`
-        );
+        if (resultadoEmail.error) {
+          console.error(
+            "Erro ao enviar e-mail:",
+            resultadoEmail.error
+          );
+        } else {
+          console.log(
+            `E-mail enviado para nova solicitação ${protocolo}`
+          );
+        }
 
         console.log(
           "Resposta do Resend:",
           resultadoEmail
         );
-
       } catch (emailError) {
         console.error(
           "Erro ao enviar e-mail:",
@@ -510,11 +490,8 @@ app.post(
       return res.status(201).json({
         mensagem:
           "Solicitação registrada com sucesso.",
-
         protocolo,
-
         fotos,
-
         status: "RECEBIDO",
       });
 
@@ -538,33 +515,37 @@ app.post(
 
 app.get(
   "/api/solicitacoes/:protocolo",
-  (req, res) => {
+  async (req, res) => {
     try {
       const { protocolo } = req.params;
 
-      const solicitacao = db
-        .prepare(
-          `
-          SELECT
-            id,
-            protocolo,
-            categoria,
-            descricao,
-            fotos,
-            rua,
-            numero,
-            bairro,
-            cidade,
-            latitude,
-            longitude,
-            status,
-            criado_em,
-            atualizado_em
-          FROM solicitacoes
-          WHERE protocolo = ?
-          `
-        )
-        .get(protocolo);
+      const {
+        data: solicitacao,
+        error,
+      } = await supabase
+        .from("solicitacoes")
+        .select(`
+          id,
+          protocolo,
+          categoria,
+          descricao,
+          fotos,
+          rua,
+          numero,
+          bairro,
+          cidade,
+          latitude,
+          longitude,
+          status,
+          criado_em,
+          atualizado_em
+        `)
+        .eq("protocolo", protocolo)
+        .maybeSingle();
+
+      if (error) {
+        throw error;
+      }
 
       if (!solicitacao) {
         return res.status(404).json({
@@ -599,17 +580,21 @@ app.get(
 app.get(
   "/api/admin/solicitacoes",
   autenticarAdmin,
-  (req, res) => {
+  async (req, res) => {
     try {
-      const solicitacoes = db
-        .prepare(
-          `
-          SELECT *
-          FROM solicitacoes
-          ORDER BY id DESC
-          `
-        )
-        .all();
+      const {
+        data: solicitacoes,
+        error,
+      } = await supabase
+        .from("solicitacoes")
+        .select("*")
+        .order("id", {
+          ascending: false,
+        });
+
+      if (error) {
+        throw error;
+      }
 
       const resultado =
         solicitacoes.map((item) => ({
@@ -642,10 +627,9 @@ app.get(
 app.put(
   "/api/admin/solicitacoes/:protocolo/status",
   autenticarAdmin,
-  (req, res) => {
+  async (req, res) => {
     try {
       const { protocolo } = req.params;
-
       const { status } = req.body;
 
       const statusPermitidos = [
@@ -662,34 +646,30 @@ app.put(
         });
       }
 
-      const resultado = db
-        .prepare(
-          `
-          UPDATE solicitacoes
-          SET
-            status = ?,
-            atualizado_em = CURRENT_TIMESTAMP
-          WHERE protocolo = ?
-          `
-        )
-        .run(status, protocolo);
+      const {
+        data: solicitacao,
+        error,
+      } = await supabase
+        .from("solicitacoes")
+        .update({
+          status,
+          atualizado_em:
+            new Date().toISOString(),
+        })
+        .eq("protocolo", protocolo)
+        .select("*")
+        .maybeSingle();
 
-      if (resultado.changes === 0) {
+      if (error) {
+        throw error;
+      }
+
+      if (!solicitacao) {
         return res.status(404).json({
           mensagem:
             "Solicitação não encontrada.",
         });
       }
-
-      const solicitacao = db
-        .prepare(
-          `
-          SELECT *
-          FROM solicitacoes
-          WHERE protocolo = ?
-          `
-        )
-        .get(protocolo);
 
       return res.json({
         mensagem:
@@ -721,7 +701,9 @@ app.put(
 
 app.use(
   (error, req, res, next) => {
-    if (error instanceof multer.MulterError) {
+    if (
+      error instanceof multer.MulterError
+    ) {
       return res.status(400).json({
         mensagem:
           "Erro no envio das fotos: " +
@@ -751,6 +733,6 @@ app.listen(PORT, "0.0.0.0", () => {
   );
 
   console.log(
-    "Banco de dados conectado."
+    "Banco de dados: Supabase"
   );
 });
