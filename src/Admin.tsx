@@ -79,9 +79,7 @@ function formatarData(data: string) {
     return "-";
   }
 
-  const dataFormatada = new Date(
-    data.replace(" ", "T") + "Z"
-  );
+  const dataFormatada = new Date(data);
 
   if (isNaN(dataFormatada.getTime())) {
     return data;
