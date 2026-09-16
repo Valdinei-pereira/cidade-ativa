@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const fs = require("fs");
 
-dotenv.config();
+require("dotenv").config();
 
 const supabase = require("./supabase");
 const { Resend } = require("resend");
