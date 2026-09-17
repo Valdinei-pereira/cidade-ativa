@@ -1587,3 +1587,144 @@ textarea {
     height: 200px;
   }
 }
+
+/* HEADER - CELULAR */
+@media (max-width: 700px) {
+  .header {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .header-logo {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .header-logo h1 {
+    font-size: 16px;
+  }
+
+  .header-logo p {
+    font-size: 11px;
+  }
+
+  .header-buttons {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+  }
+
+  .header-buttons button {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+}
+
+.menu-mobile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 8px;
+  background: #087f5b;
+  color: #ffffff;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 9998;
+}
+
+.menu-lateral {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px;
+  max-width: 85%;
+  height: 100vh;
+  background: #ffffff;
+  z-index: 9999;
+  padding: 22px 18px;
+  box-sizing: border-box;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+  animation: abrirMenu 0.25s ease;
+}
+
+.menu-fechar {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  border: none;
+  background: transparent;
+  font-size: 22px;
+  color: #555;
+  cursor: pointer;
+}
+
+.menu-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 5px 25px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.menu-logo strong {
+  display: block;
+  color: #087f5b;
+  font-size: 18px;
+}
+
+.menu-logo span {
+  display: block;
+  margin-top: 4px;
+  color: #777;
+  font-size: 12px;
+}
+
+.menu-opcoes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.menu-opcoes button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  background: #f4f7f6;
+  color: #222;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.menu-opcoes button:hover {
+  background: #e8f4ef;
+}
+
+@keyframes abrirMenu {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}

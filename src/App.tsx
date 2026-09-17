@@ -252,7 +252,7 @@ function App() {
       : "inicio"
 
   );
-
+    const [menuAberto, setMenuAberto] = useState(false);
   /* ===================================================
 
      ETAPA DO FORMULÁRIO
@@ -623,13 +623,9 @@ function App() {
 
         setBuscandoEndereco(true);
 
-        const response =
-
-          await fetch(
-
-            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1&accept-language=pt-BR`
-
-          );
+const response = await fetch(
+  `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1&accept-language=pt-BR`
+);
 
         if (!response.ok) {
 
@@ -2526,65 +2522,79 @@ if (pagina === "admin") {
 
         </div>
 
-        <div
+      <button
+  className="menu-mobile"
+  type="button"
+  onClick={() => setMenuAberto(true)}
+  aria-label="Abrir menu"
+>
+  ☰
+</button>
+{menuAberto && (
+  <>
+    <div
+      className="menu-overlay"
+      onClick={() => setMenuAberto(false)}
+    />
 
-          style={{
+    <aside className="menu-lateral">
 
-            display: "flex",
+      <button
+        className="menu-fechar"
+        type="button"
+        onClick={() => setMenuAberto(false)}
+        aria-label="Fechar menu"
+      >
+        ✕
+      </button>
 
-            gap: "10px",
+      <div className="menu-logo">
 
-            alignItems: "center",
-
-          }}
-
-        >
-
-          <button
-
-            className="botao-consultar"
-
-            onClick={() => {
-
-              setConsulta(
-
-                null
-
-              );
-
-              setErroConsulta(
-
-                ""
-
-              );
-
-              setPagina(
-
-                "consulta"
-
-              );
-
-            }}
-
-          >
-
-            🔎 Consultar protocolo
-
-          </button>
-
-          <button
-
-            className="botao-consultar"
-
-            onClick={() => setPagina("admin-login")}
-
-          >
-
-            🏛️ Administração
-
-          </button>
-
+        <div className="logo-icone">
+          🏛️
         </div>
+
+        <div>
+          <strong>
+            NEYghborhood
+          </strong>
+
+          <span>
+            Participação cidadã
+          </span>
+        </div>
+
+      </div>
+
+      <nav className="menu-opcoes">
+
+        <button
+          type="button"
+          onClick={() => {
+            setMenuAberto(false);
+            setConsulta(null);
+            setErroConsulta("");
+            setPagina("consulta");
+          }}
+        >
+          🔎 Consultar protocolo
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            setMenuAberto(false);
+            setPagina("admin-login");
+          }}
+        >
+          🏛️ Administração
+        </button>
+
+      </nav>
+
+    </aside>
+  </>
+)}
 
       </header>
 
