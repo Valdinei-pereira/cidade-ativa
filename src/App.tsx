@@ -1960,29 +1960,26 @@ if (pagina === "admin") {
 
               />
 
-              <button
-
-                onClick={
-
-                  consultarProtocolo
-
-                }
-
-                disabled={
-
-                  consultando
-
-                }
-
-              >
-
-                {consultando
-
-                  ? "Consultando..."
-
-                  : "Consultar"}
-
-              </button>
+          <button
+            onClick={consultarProtocolo}
+            disabled={consultando}
+              style={{
+                height: "36px",
+                padding: "0 16px",
+                border: "1px solid #087f5b",
+                borderRadius: "6px",
+                background: "#087f5b",
+                color: "#ffffff",
+                fontSize: "13px",
+                fontWeight: 500,
+                cursor: consultando ? "not-allowed" : "pointer",
+                whiteSpace: "nowrap",
+                boxSizing: "border-box",
+              }}
+          >
+            {consultando ? "Consultando..." : "Consultar"}
+          </button>
+            
 
             </div>
 
@@ -2030,163 +2027,181 @@ if (pagina === "admin") {
 
                 </div>
 
-                <div
-
-                  className={`status-badge ${
-
-                    consulta.status ===
-
-                    "RECEBIDO"
-
-                      ? "status-recebido"
-
-                      : consulta.status ===
-
-                        "EM_ANALISE"
-
-                      ? "status-analise"
-
-                      : consulta.status ===
-
-                        "EM_ATENDIMENTO"
-
-                      ? "status-atendimento"
-
-                      : consulta.status ===
-
-                        "RESOLVIDO"
-
-                      ? "status-resolvido"
-
-                      : "status-recusado"
-
-                  }`}
-
-                >
-
-                  {statusTexto(
-
-                    consulta.status
-
-                  )}
-
-                </div>
+               {consulta.status !== "RECUSADO" && (
+  <div
+    className={`status-badge ${
+      consulta.status === "RECEBIDO"
+        ? "status-recebido"
+        : consulta.status === "EM_ANALISE"
+          ? "status-analise"
+          : consulta.status === "EM_ATENDIMENTO"
+            ? "status-atendimento"
+            : "status-resolvido"
+    }`}
+  >
+    {statusTexto(consulta.status)}
+  </div>
+)}
 
               </div>
 
-              {/* ANDAMENTO */}
+   <div className="consulta-card">
+  <h2>
+    📋 Andamento da solicitação
+  </h2>
 
-              <div className="consulta-card">
+  {consulta.status === "RECUSADO" ? (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "25px 10px 15px",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "12px",
+          color: "#dc2626",
+          fontWeight: 700,
+          fontSize: "15px",
+        }}
+      >
+        <div
+          style={{
+            width: "40px",
+            height: "40px",
+            borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "#dc2626",
+            color: "#fff",
+            fontSize: "18px",
+          }}
+        >
+          ✕
+        </div>
 
-                <h2>
+        <span>Solicitação recusada</span>
+      </div>
+    </div>
+  ) : (
+    <div
+      style={{
+        width: "100%",
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "flex-start",
+        justifyContent: "space-between",
+        gap: "0",
+        marginTop: "24px",
+        overflowX: "auto",
+        padding: "0 8px 12px",
+        boxSizing: "border-box",
+      }}
+    >
+      {[
+        {
+          nome: "Recebido",
+          concluida: [
+            "RECEBIDO",
+            "EM_ANALISE",
+            "EM_ATENDIMENTO",
+            "RESOLVIDO",
+          ].includes(consulta.status),
+        },
+        {
+          nome: "Em análise",
+          concluida: [
+            "EM_ANALISE",
+            "EM_ATENDIMENTO",
+            "RESOLVIDO",
+          ].includes(consulta.status),
+        },
+        {
+          nome: "Atendimento",
+          concluida: [
+            "EM_ATENDIMENTO",
+            "RESOLVIDO",
+          ].includes(consulta.status),
+        },
+        {
+          nome: "Resolvido",
+          concluida: consulta.status === "RESOLVIDO",
+        },
+      ].map((item, index, lista) => (
+        <div
+          key={item.nome}
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            flex: "1 1 0",
+            minWidth: "130px",
+          }}
+        >
+          <div
+            style={{
+              width: "130px",
+              minWidth: "130px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              textAlign: "center",
+              fontSize: "13px",
+              fontWeight: item.concluida ? 700 : 500,
+              color: item.concluida ? "#2563eb" : "#9ca3af",
+            }}
+          >
+            <div
+              style={{
+                width: "40px",
+                height: "40px",
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: item.concluida ? "#2563eb" : "#e5e7eb",
+                color: item.concluida ? "#ffffff" : "#6b7280",
+                fontSize: "14px",
+                fontWeight: 700,
+                flexShrink: 0,
+                boxSizing: "border-box",
+              }}
+            >
+              {item.concluida ? "✓" : index + 1}
+            </div>
 
-                  📋 Andamento da solicitação
+            <span
+              style={{
+                marginTop: "9px",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {item.nome}
+            </span>
+          </div>
 
-                </h2>                <div
-                  style={{
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "flex-start",
-                    justifyContent: "space-between",
-                    gap: "0",
-                    marginTop: "24px",
-                    overflowX: "auto",
-                    padding: "0 8px 12px",
-                    boxSizing: "border-box",
-                  }}
-                >
-                  {[
-                    {
-                      nome: "Recebido",
-                      concluida: [
-                        "RECEBIDO",
-                        "EM_ANALISE",
-                        "EM_ATENDIMENTO",
-                        "RESOLVIDO",
-                      ].includes(consulta.status),
-                    },
-                    {
-                      nome: "Em análise",
-                      concluida: [
-                        "EM_ANALISE",
-                        "EM_ATENDIMENTO",
-                        "RESOLVIDO",
-                      ].includes(consulta.status),
-                    },
-                    {
-                      nome: "Atendimento",
-                      concluida: [
-                        "EM_ATENDIMENTO",
-                        "RESOLVIDO",
-                      ].includes(consulta.status),
-                    },
-                    {
-                      nome: "Resolvido",
-                      concluida: consulta.status === "RESOLVIDO",
-                    },
-                  ].map((item, index, lista) => (
-                    <div
-                      key={item.nome}
-                      style={{
-                        display: "flex",
-                        alignItems: "flex-start",
-                        flex: "1 1 0",
-                        minWidth: "130px",
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: "130px",
-                          minWidth: "130px",
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          textAlign: "center",
-                          fontSize: "13px",
-                          fontWeight: item.concluida ? 700 : 500,
-                          color: item.concluida ? "#2563eb" : "#9ca3af",
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: "40px",
-                            height: "40px",
-                            borderRadius: "50%",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            background: item.concluida ? "#2563eb" : "#e5e7eb",
-                            color: item.concluida ? "#ffffff" : "#6b7280",
-                            fontSize: "14px",
-                            fontWeight: 700,
-                            flexShrink: 0,
-                            boxSizing: "border-box",
-                          }}
-                        >
-                          {item.concluida ? "✓" : index + 1}
-                        </div>
-                        <span style={{ marginTop: "9px", whiteSpace: "nowrap" }}>
-                          {item.nome}
-                        </span>
-                      </div>
-                      {index < lista.length - 1 && (
-                        <div
-                          style={{
-                            flex: "1 1 auto",
-                            height: "3px",
-                            marginTop: "18px",
-                            background: lista[index + 1].concluida
-                              ? "#2563eb"
-                              : "#e5e7eb",
-                            borderRadius: "99px",
-                          }}
-                        />
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
+          {index < lista.length - 1 && (
+            <div
+              style={{
+                flex: "1 1 auto",
+                height: "3px",
+                marginTop: "18px",
+                background: lista[index + 1].concluida
+                  ? "#2563eb"
+                  : "#e5e7eb",
+                borderRadius: "99px",
+              }}
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  )}
+</div>
 
               <div className="consulta-grid">
 
@@ -2324,23 +2339,7 @@ if (pagina === "admin") {
 
                     <strong>
 
-                      {new Date(
-
-                        consulta.criado_em.replace(
-
-                          " ",
-
-                          "T"
-
-                        ) +
-
-                          "Z"
-
-                      ).toLocaleString(
-
-                        "pt-BR"
-
-                      )}
+                {new Date(consulta.criado_em).toLocaleString("pt-BR")}
 
                     </strong>
 
@@ -2456,23 +2455,7 @@ if (pagina === "admin") {
 
                 <strong>
 
-                  {new Date(
-
-                    consulta.atualizado_em.replace(
-
-                      " ",
-
-                      "T"
-
-                    ) +
-
-                      "Z"
-
-                  ).toLocaleString(
-
-                    "pt-BR"
-
-                  )}
+        {new Date(consulta.atualizado_em).toLocaleString("pt-BR")}
 
                 </strong>
 
